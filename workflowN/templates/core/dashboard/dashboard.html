@@ -1,0 +1,837 @@
+{% extends BASE_TEMPLATE %}
+
+{% block css %}
+    {#    <link rel="stylesheet" href="{{ STATIC_URL }}assets/css/datatable.min.css">#}
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/css/dashboard.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}dms/explorer/css/themes/default/style.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}dms/explorer/css/explorer.css">
+
+    <style>
+        .mini-charts-item .count > h2 {
+            font-weight: 400 !important;
+        }
+
+        {#.dropup .dropdown-menu, .navbar-fixed-bottom .dropdown .dropdown-menu {#}
+        {#    top: auto;#}
+        {#    bottom: 100%;#}
+        {#    margin-bottom: -100px !important;#}
+        {#    margin-top: 48px;#}
+        {#}#}
+
+        {#        .mini-charts-item .count > h2 {#}
+        {#            color: rgba(0, 0, 0, 0.76) !important;#}
+        {#        }#}
+        {##}
+        {#        .mini-charts-item:hover .count {#}
+        {#            color: rgba(0, 0, 0, 0.76) !important;#}
+        {#        }#}
+        {##}
+        {#        .mini-charts-item .count > strong {#}
+        {#            color: rgba(0, 0, 0, 0.76) !important;#}
+        {#        }#}
+        {##}
+        {#        .mini-charts-item:hover .count {#}
+        {#            color: rgba(0, 0, 0, 0.76) !important;#}
+        {#        }#}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <section id="main">
+        <section id="content" class="content-alt">
+            <div class="container">
+                {% if WORKFLOW == 'aBX3RODumf' %}
+                    <div class="mini-charts">
+                        <div class="row">
+
+                            <div class="col-sm-6 col-md-3">
+                                <a href="/workflow/case/inbox/">
+                                    <div class="mini-charts-item bgm-pink effect1 m-b-20">
+                                        <div class="clearfix">
+                                            <div class="chart chart-pie stats-pie"></div>
+                                            <div id="pr" class="count">
+                                                <strong>Pending Request</strong>
+                                                <h2>0</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+                                <a href="/workflow/case/overdue/">
+                                    <div class="mini-charts-item bgm-red effect1 m-b-20">
+                                        <div class="clearfix">
+                                            <div class="chart stats-line-2"></div>
+                                            <div id="or" class="count">
+                                                <strong>Overdue Requests</strong>
+                                                <h2>0</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+                                <a href="/workflow/case/query/">
+                                    <div class="mini-charts-item bgm-indigo effect1 m-b-20">
+                                        <div class="clearfix">
+                                            <div class="chart chart-pie stats-pie"></div>
+                                            <div id="tr" class="count">
+                                                <strong>Query Request</strong>
+                                                <h2>0</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+                                <a href="/workflow/case/participated">
+                                    <div class="mini-charts-item bgm-green effect1 m-b-20"
+                                         style="background-color: #42d78c!important;">
+                                        <div class="clearfix">
+                                            <div class="chart stats-bar-2"></div>
+                                            <div id="cr" class="count">
+                                                <strong>Completed Requests</strong>
+                                                <h2>0</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <!-- Recent Items -->
+                            <div class="card effect2">
+                                <div class="card-header p-b-10">
+                                    <h2><span id="InorOp">Initiated </span> vs Completed
+                                        <small></small>
+                                    </h2>
+
+                                </div>
+                                <div class="card-body card-padding">
+                                    <div id="init_vs_comp"
+                                         style="min-width: 250px; height: 185px; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <!-- Recent Posts -->
+                            <div class="card effect2">
+                                <div class="card-header p-b-10">
+                                    <h2><a class="media" href="/workflow/case/new_case">New Application</a>
+                                        <small>Please select any of following applications</small>
+                                    </h2>
+                                </div>
+
+                                <div class="card-body" style="overflow: auto; height:190px;">
+                                    <div id="applications" class="list-group">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <!-- Tasks -->
+                            <div class="card effect2">
+                                <div class="card-header p-b-5">
+                                    <h2>Task Summary
+                                        <small></small>
+                                    </h2>
+                                </div>
+
+                                <div class="card-body" style="height:235px;">
+                                    <div class="list-group">
+                                        <div class="list-group-item p-t-5 p-b-5">
+                                            <div class="lgi-heading m-b-5">Open Requests</div>
+
+                                            <div class="progress">
+                                                <div class="progress-bar" id="ORPB" role="progressbar"
+                                                     aria-valuenow="95"
+                                                     aria-valuemin="0" aria-valuemax="100" style="width: 95%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item p-t-5 p-b-5">
+                                            <div class="lgi-heading m-b-5">Approved Requests</div>
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-success" id="ARPB"
+                                                     role="progressbar"
+                                                     aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
+                                                     style="width: 80%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item p-t-5 p-b-5">
+                                            <div class="lgi-heading m-b-5">Rejected Requests</div>
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-info" id="RRPB" role="progressbar"
+                                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"
+                                                     style="width: 20%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item p-t-5 p-b-5">
+                                            <div class="lgi-heading m-b-5">Queries</div>
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-warning" id="QPB"
+                                                     role="progressbar"
+                                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                                     style="width: 60%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item p-t-5 p-b-5">
+                                            <div class="lgi-heading m-b-5">
+                                                Re-Check
+                                            </div>
+
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-danger" id="RCPB"
+                                                     role="progressbar"
+                                                     aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
+                                                     style="width: 80%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <!-- Bar chart -->
+                            <div class="card effect2">
+                                <div class="card-header p-b-5">
+                                    <h2>Monthly Statistics
+                                        <small>Completion Before Risk vs Within Risk vs Overdue</small>
+                                    </h2>
+                                </div>
+
+                                <div class="card-body card-padding-sm">
+                                    <div id="monthly_statistics"
+                                         style="min-width: 250px; height: 185px; margin: 0 auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if DMS == '9dL53eBFDK' %}
+                    <div class="row">
+                        <div class="single-widget col-md-6" id="docsummary_widget">
+                            <div class="card effect2">
+                                <div class="card-header p-b-5">
+                                    <h2>Document Summary</h2>
+                                </div>
+
+                                <div class="card-body">
+                                    <div id="pieChart" style="overflow: auto">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="single-widget col-md-6" id="dms_widget">
+                            <div class="card visitors effect2">
+                                <div class="card-body card-padding">
+                                    <div class="visitors-stats clearfix">
+                                        <div class="col-xs-6">
+                                            <a href="/dms/document/checkout/">
+                                                <div class="visitors-stats-item bgm-purple">
+                                                    <strong id="dms_CODN">0</strong>
+                                                    <small class="f-500 c-white">Check Out Document Number</small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 ">
+                                            <a href="/dms/document/expire/">
+                                                <div class="visitors-stats-item bgm-deeppurple">
+                                                    <strong id="dms_ex">0</strong>
+                                                    <small class="f-500 c-white">Document will be Expired Next 30 Days
+                                                    </small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="visitors-stats clearfix">
+                                        <div class="col-xs-6 ">
+                                            <a href="/dms/document/upload/standard_upload/filesave/pendingmetalist/">
+                                                <div class="visitors-stats-item bgm-teal">
+                                                    <strong id="dms_PDN">0</strong>
+                                                    <small class="f-500 c-white">Pending Document Number</small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 ">
+                                            <div class="visitors-stats-item bgm-green">
+                                                <strong id="dms_TDN">0</strong>
+                                                <small class="f-500 c-white">Total Document Number</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div class="visitors-stats clearfix">
+                                        <div class="col-xs-6 ">
+                                            <div class="visitors-stats-item bgm-orange">
+                                                <strong id="dms_US">0</strong>
+                                                <small class="f-500 c-white">Used Space</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 ">
+                                            <div class="visitors-stats-item bgm-deeporange">
+                                                <strong id="dms_FS">0</strong>
+                                                <small class="f-500 c-white">Free Space</small>
+                                            </div>
+                                        </div>
+                                    </div>-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 m-b-20">
+                            <div class="card effect2"
+                                 style="margin-bottom: 0 !important;overflow-y: scroll; height:400px">
+                                <div class="card-header">
+                                    <h2>Explorer</h2>
+                                    <div class="col-sm-4 order_by" style="float: right">
+                                        <div class="form-group">
+                                            <div class="fg-line">
+                                                <select class="form-control selectpicker" name="type"
+                                                        id="order_by" data-docid="" data-employee_id=""
+                                                        data-doc-type="">
+                                                    <option value="">Select Please</option>
+                                                    <option value="1">Order by name(Ascending)</option>
+                                                    <option value="2">Order by name(Descending)</option>
+                                                    <option value="3">Order by date(Ascending)</option>
+                                                    <option value="4">Order by date(Descending)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body card-padding">
+                                    <div id="explorer" class="row">
+                                        <div id="left" class="col-md-3 col-sm-6 col-xs-12">
+                                        </div>
+                                        <div id="right" class="col-md-9 col-sm-6 col-xs-12">
+                                            <div id="main-window" class="row">
+                                                <div class="text-center">No category/document type selected.</div>
+                                            </div>
+
+                                            <ul id="paginate_explorer" class="pagination lg-pagination"></ul>
+
+                                        </div>
+                                        {#                                        <table>#}
+                                        {#                                            <tr>#}
+                                        {#                                                <td width="30%">#}
+                                        {#                                                    <div id="left" class="">#}
+                                        {#                                                    </div>#}
+                                        {#                                                </td>#}
+                                        {#                                                <td width="70%">#}
+                                        {#                                                    <div id="right" class="">#}
+                                        {#                                                        <div id="main-window" class="row">#}
+                                        {#                                                            <div class="text-center">No category/document type#}
+                                        {#                                                                selected.#}
+                                        {#                                                            </div>#}
+                                        {#                                                        </div>#}
+                                        {##}
+                                        {#                                                        <ul id="paginate_explorer"#}
+                                        {#                                                            class="pagination lg-pagination"></ul>#}
+                                        {##}
+                                        {#                                                    </div>#}
+                                        {#                                                </td>#}
+                                        {#                                            </tr>#}
+                                        {#                                        </table>#}
+
+
+                                    </div>
+
+                                    <div id="nothing" class="text-center card-padding">No category or document.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="modal fade" id="explorer_excel_ViewModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header p-5">
+                                    <h4 class="modal-title c-gray"></h4>
+                                </div>
+
+                                <div class="modal-body p-0 p-l-10 p-r-10"
+                                     style="overflow-x: scroll; width:900px;overflow-y: scroll; height:400px">
+                                    <div class="explorer-doc-preview"></div>
+                                </div>
+
+                                <div class="modal-footer p-5">
+                                    <br>
+                                    <ul id="explorer_doc_pagination" class="pagination lg-pagination"
+                                        style="display:none;"></ul>
+                                    <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--modal for view files-->
+                    <div class="modal fade" id="viewFiles" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" style="max-width: 90%; float: left;"></h4>
+
+                                    <ul class="actions" style="max-width: 9%; float: right;">
+                                        <li>
+                                            <a id="hide_self_fixed" href="#" data-dismiss="modal">
+                                                <i class="zmdi zmdi-close"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="modal-body">
+                <span id="file_container">
+
+                </span>
+                                </div>
+                                <!--<div class="modal-footer">
+                                    <button type="button" class="btn btn-link" data-dismiss="modal">Close
+                                    </button>
+                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                {% endif %}
+            </div>
+        </section>
+    </section>
+
+    {#        <section id="main">#}
+    {#            <section id="content" class="content-alt">#}
+    {#                <div class="container">#}
+    {#                    <div class="block-header">#}
+    {#                        <h2>Dashboard</h2>#}
+    {##}
+    {#                        <!--<ul class="actions">#}
+    {#                            <li class="dropdown">#}
+    {#                                <a href="#" data-toggle="dropdown">#}
+    {#                                    <i class="zmdi zmdi-more-vert"></i>#}
+    {#                                </a>#}
+    {##}
+    {#                                <ul class="dropdown-menu dropdown-menu-right">#}
+    {#                                    <li>#}
+    {#                                        <a href="#">Refresh</a>#}
+    {#                                    </li>#}
+    {#                                    <li>#}
+    {#                                        <a href="#">Manage Widgets</a>#}
+    {#                                    </li>#}
+    {#                                    <li>#}
+    {#                                        <a href="#">Widgets Settings</a>#}
+    {#                                    </li>#}
+    {#                                </ul>#}
+    {#                            </li>#}
+    {#                        </ul>-->#}
+    {##}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#    <div class="mini-charts">#}
+    {#                    <div class="row">#}
+    {#                            <div class="col-sm-6 col-md-3">#}
+    {#                                <div class="mini-charts-item bgm-lightgreen">#}
+    {#                                    <div class="clearfix">#}
+    {#                                        <div class="chart stats-bar"></div>#}
+    {#                                        <div class="count">#}
+    {#                                            <small>Website Traffics</small>#}
+    {#                                            <h2>987,459</h2>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {##}
+    {#                            <div class="col-sm-6 col-md-3">#}
+    {#                                <div class="mini-charts-item bgm-purple">#}
+    {#                                    <div class="clearfix">#}
+    {#                                        <div class="chart stats-bar-2"></div>#}
+    {#                                        <div class="count">#}
+    {#                                            <small>Website Impressions</small>#}
+    {#                                            <h2>356,785K</h2>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {##}
+    {#                            <div class="col-sm-6 col-md-3">#}
+    {#                                <div class="mini-charts-item bgm-orange">#}
+    {#                                    <div class="clearfix">#}
+    {#                                        <div class="chart stats-line"></div>#}
+    {#                                        <div class="count">#}
+    {#                                            <small>Total Sales</small>#}
+    {#                                            <h2>$ 458,778</h2>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {##}
+    {#                            <div class="col-sm-6 col-md-3">#}
+    {#                                <div class="mini-charts-item bgm-bluegray">#}
+    {#                                    <div class="clearfix">#}
+    {#                                        <div class="chart stats-line-2"></div>#}
+    {#                                        <div class="count">#}
+    {#                                            <small>Support Tickets</small>#}
+    {#                                            <h2>23,856</h2>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="dash-widgets">#}
+    {#                        <div class="row">#}
+    {#                            {% if WORKFLOW == 'aBX3RODumf' %}#}
+    {#                                <div class="single-widget col-md-12 col-sm-12" id="kpi_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Key Performance Indicator</h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <div id="pie-charts">#}
+    {#                                                <div class="text-center">#}
+    {#                                                    <div class="gauge_wrap">#}
+    {#                                                        <div class='guageContainer' id="pending_kpi"></div>#}
+    {#                                                        <div class='guageContainer' id="risk_kpi"></div>#}
+    {#                                                        <div class='guageContainer' id="completed_kpi"></div>#}
+    {#                                                        <div class='guageContainer' id="completed_before_due_kpi"></div>#}
+    {#                                                        <div class='guageContainer' id="completed_after_due_kpi"></div>#}
+    {#                                                        <div class='guageContainer' id="over_due_kpi"></div>#}
+    {#                                                    </div>#}
+    {#                                                </div>#}
+    {#                                            </div>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            {% if DMS == '9dL53eBFDK' %}#}
+    {#                                <div class="single-widget col-md-6 col-sm-6" id="docsummary_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Document Summary</h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <div id="pieChart" style="overflow: auto">#}
+    {#                                            </div>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            {% if WORKFLOW == 'aBX3RODumf' %}#}
+    {#                                <div class="single-widget col-md-6 col-sm-6" id="inbox_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Inbox#}
+    {#                                            </h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <table id="inboxTable" class="dashboard-data-table table table-striped"#}
+    {#                                                   cellspacing="0"#}
+    {#                                                   width="100%">#}
+    {##}
+    {#                                            </table>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            {% if WORKFLOW == 'aBX3RODumf' %}#}
+    {#                                <div class="single-widget col-md-6 col-sm-6" id="risk_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Risk Tasks#}
+    {#                                            </h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <table id="riskTaskTable" class="dashboard-data-table table table-striped">#}
+    {#                                            </table>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            {% if WORKFLOW == 'aBX3RODumf' %}#}
+    {#                                <div class="single-widget col-md-6 col-sm-6" id="over_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Over Due Tasks#}
+    {#                                            </h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <table id="overDueTaskTable" class="dashboard-data-table table table-striped">#}
+    {#                                            </table>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            {% if DMS == '9dL53eBFDK' %}#}
+    {#                                <div class="single-widget col-md-6 col-sm-6" id="checkout_widget">#}
+    {#                                    <div class="card">#}
+    {#                                        <div class="card-header">#}
+    {#                                            <h2>Checked out Docs#}
+    {#                                            </h2>#}
+    {#                                        </div>#}
+    {##}
+    {#                                        <div class="card-body">#}
+    {#                                            <table id="checkedOutTaskTable"#}
+    {#                                                   class="dashboard-data-table table table-striped">#}
+    {#                                            </table>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            {% endif %}#}
+    {##}
+    {#                            <div class="single-widget col-md-6 col-sm-6" id="todo_widget">#}
+    {##}
+    {#                                <!-- Todo -->#}
+    {#                                <div class="card">#}
+    {#                                    <div class="card-header">#}
+    {#                                        <h2>Todo List#}
+    {#                                        </h2>#}
+    {##}
+    {#                                        <ul class="actions todo-actions">#}
+    {#                                            <li>#}
+    {#                                                <a title="Add Todo" href="#" id="addTodo">#}
+    {#                                                    <i class="zmdi zmdi-plus c-black"></i>#}
+    {#                                                </a>#}
+    {#                                            </li>#}
+    {#                                            <li>#}
+    {#                                                <a title="Toggle Complete/Incomplete" id="completenessTodo" href="#">#}
+    {#                                                    <i class="zmdi zmdi-assignment-check"></i>#}
+    {#                                                </a>#}
+    {#                                            </li>#}
+    {#                                            <li>#}
+    {#                                                <a title="Update Todo" id="updateTodo" href="#">#}
+    {#                                                    <i class="zmdi zmdi-edit"></i>#}
+    {#                                                </a>#}
+    {#                                            </li>#}
+    {#                                            <li>#}
+    {#                                                <a title="Delete Todo" id="deleteTodo" href="#">#}
+    {#                                                    <i class="zmdi zmdi-delete"></i>#}
+    {#                                                </a>#}
+    {#                                            </li>#}
+    {#                                        </ul>#}
+    {#                                    </div>#}
+    {##}
+    {#                                    <div class="card-body">#}
+    {#                                        <table id="todoListTable" class="dashboard-data-table table table-striped">#}
+    {#                                        </table>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#                    <!-- Modal todo -->#}
+    {#                    <div class="modal fade" id="modalTodo" tabindex="-1" role="dialog" aria-hidden="true"#}
+    {#                         data-backdrop="static">#}
+    {#                        <div class="modal-dialog modal-sm">#}
+    {#                            <form action="#" id="addEditTodoForm">#}
+    {#                                <div class="modal-content">#}
+    {#                                    <div class="modal-header">#}
+    {#                                        <h4 class="modal-title">Add Todo</h4>#}
+    {#                                    </div>#}
+    {#                                    <div class="modal-body">#}
+    {#                                        <div class="row">#}
+    {#                                            <div class="col-sm-12">#}
+    {#                                                <div id="textAreaErr">#}
+    {#                                                    <textarea data-parsley-required="true" maxlength="50" name="text"#}
+    {#                                                              id="text" cols="30" rows="10"#}
+    {#                                                              style="width:100%; max-width: 100%;"#}
+    {#                                                              data-parsley-errors-container="#textAreaErr"#}
+    {#                                                              placeholder="Write a todo work"></textarea>#}
+    {#                                                </div>#}
+    {#                                            </div>#}
+    {#                                        </div>#}
+    {#                                        <div class="row">#}
+    {#                                            <div class="col-sm-12">#}
+    {#                                                <p class="c-black f-500 m-b-5">Expiry Date</p>#}
+    {##}
+    {#                                                <div class="input-group form-group">#}
+    {#                                                    <span class="input-group-addon"><i#}
+    {#                                                            class="zmdi zmdi-calendar"></i></span>#}
+    {#                                                    <div class="dtp-container">#}
+    {#                                                        <input data-parsley-required="true" type='text' name="due_date"#}
+    {#                                                               id="due_date" class="form-control"#}
+    {#                                                               placeholder="Click here...">#}
+    {#                                                    </div>#}
+    {#                                                </div>#}
+    {#                                            </div>#}
+    {#                                        </div>#}
+    {##}
+    {#                                    </div>#}
+    {#                                    <div class="modal-footer">#}
+    {#                                        <button type="submit" class="btn btn-link">Save</button>#}
+    {#                                        <button type="button" class="btn btn-link" data-dismiss="modal">Close#}
+    {#                                        </button>#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </form>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </section>#}
+    {#        </section>#}
+{% endblock %}
+
+{% block js %}
+
+    <script type="text/javascript">
+        var userId = {{ request.user.id }};
+        var socket_listening_port = "{{ SOCKET_LISTENING_PORT }}";
+        {#        var new_application = "{{ url('') }}";#}
+
+    </script>
+    <script src="{{ STATIC_URL }}assets/js/highchart.js"></script>
+{#    <script type="text/javascript" src="{{ STATIC_URL }}assets/js/highcharts.min.js"></script>#}
+{#    <script type="text/javascript" src="{{ STATIC_URL }}assets/js/highcharts-more.min.js"></script>#}
+    {#    <script type="text/javascript" src="{{ STATIC_URL }}assets/js/datatable.min.js"></script>#}
+
+
+{#    <script src="{{ STATIC_URL }}assets/js/d3pie.min.js"></script>#}
+
+
+    <script src="{{ STATIC_URL }}core/node_server/socket.io.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/js/dashboard.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}core/dashboard/js/app/dashboard.js"></script>
+
+    {% raw %}
+    <script type="template" id="folder-view-template">
+        <div class="col-md-2 col-sm-4 col-xs-6 folder-thumb"
+             data-info="{'parent': {{=d.parent}}, 'self': {{=d.id}}}"
+             data-cat-id="{{=d.id}}" data-type="{{=d.type }}">
+            <div class="c-item">
+                <a class="ci-avatar">
+                    <i class="fa fa-folder-open"></i>
+                </a>
+                <div class="c-info">
+                    <strong>{{=d.name}}</strong>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="template" id="file-view-template">
+        <div class="col-md-2 col-sm-4 col-xs-6 file-thumb" data-extension="{{=d.extension}}"
+             data-file-id="{{? d.vId }}{{=d.vId}}{{??}}{{=d.id}}{{?}}">
+            <div class="c-item">
+                {{? d.locked == true }}
+                <i class="fa fa-lock"></i>
+                {{?}}
+                <!--<a target="_blank" href="/dms/document/view/{{? d.vId }}{{=d.vId}}{{??}}{{=d.id}}{{?}}/"-->
+                <a target="_blank" href="/dms/document/view/{{=d.id}}/"
+                   class="ci-avatar">
+                    {{? d.thumbnail == ""}}
+                    <i class="fa fa-{{=d.icon}}"></i>
+                    {{??}}
+                    <img width="50" height="60" src="/media/{{=d.thumbnail}}" alt="">
+                    {{?}}
+                </a>
+                <div class="c-info">
+                    <strong>{{=d.filename}}</strong>
+
+                    <ul class="quick_view_action actions">
+                        <li class="dropdown">
+                            <a class="quick_view" href="#">
+                                <i class="zmdi zmdi-eye"></i>
+                            </a>
+                            <!--
+                            <a data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="quick_view_button" href="#">Quick View</a>
+                                </li>
+                                <li>
+                                    <a class="print_button" href="#">Print</a>
+                                </li>
+                                <li>
+                                    <a class="delete_button" href="#">Delete</a>
+                                </li>
+                                <li>
+                                    <a class="download_button" href="#">Download</a>
+                                </li>
+                            </ul>
+                            -->
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </script>
+    {% endraw %}
+
+    <script type="text/javascript" src="{{ STATIC_URL }}dms/explorer/js/jstree.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}dms/explorer/js/app/explorer.js"></script>
+    {% if WORKFLOW == 'aBX3RODumf' %}
+        <script>
+            $(function () {
+                var workflow_api_ulr = '/api/v1/workflow/count/';
+                let dashboard = new Dashboard();
+                var get_promises = dashboard.httpRequest(workflow_api_ulr);
+                get_promises.done(function (response) {
+                    {#                    console.log("re",)#}
+                    var task_count = {
+                        open_request: response.open_request,
+                        approve_request: response.approve_request,
+                        reject_request: response.reject_request,
+                        query_request: response.query_request,
+                        recheck_request: response.recheck_request
+                    }
+
+                    dashboard.monthlyStatistics(response.histogram);
+                    dashboard.initVSComplete(response.initiated_vs_completed);
+                    dashboard.getKPI(response.pending, response.overdue, response.query, response.completed);
+                    dashboard.taskSummary(task_count);
+                });
+
+                dashboard.applications();
+            });
+        </script>
+    {% endif %}
+    {% if DMS == '9dL53eBFDK' %}
+        <script>
+            $(document).ready(function () {
+                $(function () {
+                    var workflow_api_ulr = '/api/v1/dms/documents/count_dms/';
+                    let dashboard = new Dashboard();
+                    var get_promises = dashboard.httpRequest(workflow_api_ulr);
+                    get_promises.done(function (response) {
+                        let dashboard = new Dashboard();
+                        dashboard.DMSCount(response)
+                    });
+                    dashboard.docSummary();
+                });
+            });
+
+        </script>
+    {% endif %}
+
+{% endblock %}
